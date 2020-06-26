@@ -7,7 +7,7 @@
   <a href="/register">Register</a>
   <a href="/logout">Log out</a>
   <a href="/profile">Profile</a>
-  <form action="/home" method="post">
+  <form action="/login" method="post">
     <table>
       <tr>
         <td>Username</td>
