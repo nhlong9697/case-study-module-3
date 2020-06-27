@@ -2,6 +2,7 @@ package service;
 
 import model.Student;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -23,8 +24,24 @@ public class StudentDAO implements StudentService{
         return connection;
     }
     @Override
-    public void add(Student student) {
-        String addQuery = "{CALL insert_student(?,?,?,?)}";
+    public boolean add(Student student) {
+        String addQuery = "{CALL insert_student(?,?,?,?,?,?)}";
+        boolean isAdded = false;
+        try (Connection connection = getConnection();
+             CallableStatement callableStatement =
+                connection.prepareCall(addQuery)
+        ) {
+            callableStatement.setString(1, student.getUsername());
+            callableStatement.setString(2,student.getPassword());
+            callableStatement.setString(3,student.getFirstName());
+            callableStatement.setString(4,student.getLastName());
+            callableStatement.setString(5,student.getEmail());
+            callableStatement.setString(6,student.getClassName());
+            isAdded = callableStatement.executeUpdate() == 1;
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return isAdded;
 
     }
 }

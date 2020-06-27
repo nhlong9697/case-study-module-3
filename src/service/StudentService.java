@@ -3,5 +3,5 @@ package service;
 import model.Student;
 
 public interface StudentService {
-    void add(Student student);
+    boolean add(Student student);
 }
