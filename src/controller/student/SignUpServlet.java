@@ -1,8 +1,8 @@
 package controller.student;
 
 import model.Student;
-import service.StudentDAO;
-import service.StudentService;
+import service.student.StudentDAO;
+import service.student.StudentService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
