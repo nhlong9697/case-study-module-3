@@ -23,7 +23,7 @@ public class SignUpServlet extends HttpServlet {
         String className = request.getParameter("className");
         Student newStudent = new Student(username,password,firstName,lastName,email,className);
         this.studentService.add(newStudent);
-        request.setAttribute("message","new product is added");
+        request.setAttribute("message","new student is added");
         try {
             request.getRequestDispatcher("signup.jsp").forward(request,response);
         } catch (ServletException | IOException e) {
