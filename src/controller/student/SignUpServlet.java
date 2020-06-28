@@ -25,7 +25,7 @@ public class SignUpServlet extends HttpServlet {
         this.studentService.add(newStudent);
         request.setAttribute("message","new student is added");
         try {
-            request.getRequestDispatcher("signup.jsp").forward(request,response);
+            request.getRequestDispatcher("student/signup.jsp").forward(request,response);
         } catch (ServletException | IOException e) {
             e.printStackTrace();
         }
