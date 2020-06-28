@@ -5,8 +5,8 @@
 </head>
 <body>
     <h1>Exam management</h1>
-    <a href="/admin?action=addProgram">Add program</a>
-    <a href="/admin?action=addClass">Add class</a>
-    <a href="/admin?action=addExam">Add exam</a>
+    <a href="/admin/addProgram">Add program</a>
+    <a href="/admin/addClass">Add class</a>
+    <a href="/admin/addExam">Add exam</a>
 </body>
 </html>
