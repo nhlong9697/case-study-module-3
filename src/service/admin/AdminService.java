@@ -1,4 +1,10 @@
 package service.admin;
 
-public class AdminService {
+import model.Program;
+
+import java.util.List;
+
+public interface AdminService {
+    void add(Program program);
+    List<Program> findAllProgram();
 }

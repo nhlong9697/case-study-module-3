@@ -9,11 +9,13 @@
         <table>
             <tr>
                 <td>Username</td>
-                <td><input type="text" name="username" placeholder="Enter username"></td>
+                <td><input type="text" name="username" placeholder="Enter username"
+                           value="admin"></td>
             </tr>
             <tr>
                 <td>Password</td>
-                <td><input type="password" name="password" placeholder="Enter password"></td>
+                <td><input type="password" name="password" placeholder="Enter password"
+                           value="123"></td>
             </tr>
             <tr>
                 <td></td>

@@ -5,6 +5,7 @@ import java.util.List;
 public class Question {
     private int questionId;
     private String question;
+    private QuestionType type;
     private Level level;
     private List<Answer> answerList;
 

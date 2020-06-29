@@ -13,6 +13,14 @@ public class Program {
         this.moduleList = moduleList;
     }
 
+    public Program(int programId, String programName) {
+        this.programId = programId;
+        this.programName = programName;
+    }
+    public Program (String programName) {
+        this.programName = programName;
+    }
+
     public int getProgramId() {
         return programId;
     }

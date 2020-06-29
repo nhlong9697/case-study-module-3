@@ -11,12 +11,12 @@ import java.io.IOException;
 @WebServlet(name = "AdminServlet", urlPatterns = "/admin")
 public class AdminServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        HttpSession session = request.getSession(false);
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         if (username.equals("admin") && password.equals("123")) {
-            HttpSession session = request.getSession();
-            session.setAttribute("name","admin");
+            session.setAttribute("admin",true);
+            response.sendRedirect("/admin");
         } else {
             request.setAttribute("fail-login","Wrong username and password");
             request.getRequestDispatcher("admin/adminLogin.jsp").forward(request,response);
@@ -25,7 +25,8 @@ public class AdminServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        if (!session.getAttribute("name").equals("admin")) {
+        if (session.getAttribute("admin") == null) {
+            request.setAttribute("not-login","Please login as admin");
             request.getRequestDispatcher("admin/adminLogin.jsp").forward(request,response);
         } else {
             String action = request.getParameter("action");
@@ -35,10 +36,13 @@ public class AdminServlet extends HttpServlet {
             switch (action) {
                 case "addClass":
                     showAddClassForm(request,response);
+                    break;
                 case "addTest":
                     showAddTestForm(request,response);
+                    break;
                 case "addProgram":
                     showAddProgramForm(request,response);
+                    break;
                 default:
                     listTask(request,response);
             }
@@ -47,6 +51,11 @@ public class AdminServlet extends HttpServlet {
 
     private void showAddProgramForm(HttpServletRequest request, HttpServletResponse response) {
         //TODO: add show add program form
+        try {
+            request.getRequestDispatcher("admin/addProgram.jsp").forward(request,response);
+        } catch (ServletException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showAddTestForm(HttpServletRequest request, HttpServletResponse response) {

@@ -4,6 +4,7 @@
     <title>Index</title>
   </head>
   <body>
+  <a href="/admin">Admin</a><br>
   <a href="/register">Register</a>
   <a href="/logout">Log out</a>
   <a href="/profile">Profile</a>
