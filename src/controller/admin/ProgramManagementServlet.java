@@ -4,6 +4,7 @@ import model.Program;
 import service.admin.AdminDAO;
 import service.admin.AdminService;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,10 +31,39 @@ public class ProgramManagementServlet extends HttpServlet {
                 case "addProgram":
                     addProgram(request,response);
                     break;
+                case "deleteProgram":
+                    deleteProgram(request,response);
+                    break;
+                case "updateProgram":
+                    updateProgram(request,response);
+                    break;
                 default:
                     break;
             }
         }
+    }
+
+    private void updateProgram(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+
+    private void deleteProgram(HttpServletRequest request, HttpServletResponse response) {
+       int id = Integer.parseInt(request.getParameter("id"));
+       Program program = this.adminService.findProgramById(id);
+       if (program == null) {
+           try {
+               request.getRequestDispatcher("error-404.jsp").forward(request,response);
+           } catch (ServletException | IOException e) {
+               e.printStackTrace();
+           }
+       } else {
+           this.adminService.remove(id);
+           try {
+               response.sendRedirect("/admin/program");
+           } catch (IOException exception) {
+               exception.printStackTrace();
+           }
+       }
     }
 
     private void addProgram(HttpServletRequest request, HttpServletResponse response) {
@@ -63,12 +93,39 @@ public class ProgramManagementServlet extends HttpServlet {
                 case "addProgram":
                     showAddProgramForm(request,response);
                     break;
+                case "deleteProgram":
+                    showDeleteProgramForm(request,response);
+                    break;
+                case "edit":
+                    showEditProgramForm(request,response);
                 default:
                     listProgram(request,response);
                     break;
             }
         }
+    }
 
+    private void showEditProgramForm(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+
+    private void showDeleteProgramForm(HttpServletRequest request, HttpServletResponse response) {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Program program = this.adminService.findProgramById(id);
+        RequestDispatcher dispatcher;
+        if (program == null) {
+            request.setAttribute("message", "can't find the id to delete");
+            dispatcher = request.getRequestDispatcher("../../error-404.jsp");
+        } else {
+            request.setAttribute("program",program);
+            dispatcher =
+                    request.getRequestDispatcher("class_management/deleteProgram.jsp");
+        }
+        try {
+            dispatcher.forward(request,response);
+        } catch (ServletException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void listProgram(HttpServletRequest request, HttpServletResponse response) {

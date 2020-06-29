@@ -13,7 +13,9 @@ public class AdminDAO implements AdminService{
     private final String INSERT_PROGRAM = "{CALL insert_program(?)}";
     private final String SELECT_ALL_PROGRAM = "SELECT program_id, program_name FROM casestudy" +
             ".program";
-
+    private final String SELECT_PROGRAM_BY_ID = "SELECT program_id, program_name FROM casestudy" +
+            ".program WHERE program_id = ?";
+    private final String DELETE_PROGRAM_BY_ID = "{CALL delete_program_by_id(?)}";
     protected Connection getConnection() {
         Connection connection = null;
         try {
@@ -29,11 +31,11 @@ public class AdminDAO implements AdminService{
     public void add(Program program) {
         System.out.println(INSERT_PROGRAM);
         try (
-                Connection connection = getConnection(); PreparedStatement preparedStatement =
-                connection.prepareStatement(INSERT_PROGRAM)
+                Connection connection = getConnection(); CallableStatement callableStatement =
+                connection.prepareCall(INSERT_PROGRAM)
         ) {
-            preparedStatement.setString(1,program.getProgramName());
-            preparedStatement.executeUpdate();
+            callableStatement.setString(1,program.getProgramName());
+            callableStatement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -60,5 +62,42 @@ public class AdminDAO implements AdminService{
             exception.printStackTrace();
         }
         return programs;
+    }
+
+    @Override
+    public Program findProgramById(int id) {
+       Program program = null;
+       try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PROGRAM_BY_ID);
+       ) {
+
+            preparedStatement.setInt(1,id);
+            System.out.println(preparedStatement);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while(rs.next()) {
+                String programName = rs.getString("program_name");
+                int programId = rs.getInt("program_id");
+                program = new Program(programId,programName);
+            }
+
+       } catch (SQLException exception) {
+            exception.printStackTrace();
+       }
+       return program;
+    }
+
+    @Override
+    public void remove(int id) {
+        try (Connection connection = getConnection();
+             CallableStatement callableStatement =
+                     connection.prepareCall(DELETE_PROGRAM_BY_ID);
+        ) {
+            callableStatement.setInt(1, id);
+            callableStatement.executeUpdate();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 }

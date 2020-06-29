@@ -5,7 +5,7 @@
     <title>Program List</title>
 </head>
 <body>
-    <a href="/admin/class?action=addProgram">Add program</a>
+    <a href="/admin/program?action=addProgram">Add program</a>
     <table border="1">
         <tr>
             <td>ID</td>
@@ -17,8 +17,10 @@
             <tr>
                 <td>${program.getProgramId()}</td>
                 <td><a href="/admin/program/${program.getProgramId()}">${program.getProgramName()}</a></td>
-                <td><a href="/admin/program?action=edit&id=${program.getProgramId()}">Edit</a></td>
-                <td><a href="/admin/program?action=delete&id=${program.getProgramId()}">Delete
+                <td><a href="/admin/program?action=editProgram&id=${program.getProgramId()}">Edit
+                </a></td>
+                <td><a
+                        href="/admin/program?action=deleteProgram&id=${program.getProgramId()}">Delete
                 </a></td>
             </tr>
         </c:forEach>

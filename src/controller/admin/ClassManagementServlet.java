@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "ClassManagementServlet", urlPatterns = {"admin/program/*","admin/program" +
+@WebServlet(name = "ClassManagementServlet", urlPatterns = {"/admin/program/*","/admin/program" +
         "/*/class"})
 public class ClassManagementServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -15,6 +15,6 @@ public class ClassManagementServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        
     }
 }

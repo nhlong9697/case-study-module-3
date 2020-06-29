@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -5,8 +6,11 @@
 </head>
 <body>
     <h1>Create program</h1>
-    <a href="/admin/class">Back to class management</a>
-    <form action="/admin/class?action=addProgram" method="post">
+    <c:if test="${requestScope.message != null}">
+        <p>${requestScope.message}</p>
+    </c:if>
+    <a href="/admin/program">Back to class management</a>
+    <form method="post">
         <table>
            <tr>
                <td>Program name</td>
