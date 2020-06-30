@@ -3,6 +3,11 @@
 <html>
 <head>
     <title>Program List</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+    </style>
 </head>
 <body>
     <a href="/admin/program?action=addProgram">Add program</a>

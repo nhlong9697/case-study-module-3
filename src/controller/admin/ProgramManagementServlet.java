@@ -34,8 +34,8 @@ public class ProgramManagementServlet extends HttpServlet {
                 case "deleteProgram":
                     deleteProgram(request,response);
                     break;
-                case "updateProgram":
-                    updateProgram(request,response);
+                case "editProgram":
+                    editProgram(request,response);
                     break;
                 default:
                     break;
@@ -43,8 +43,27 @@ public class ProgramManagementServlet extends HttpServlet {
         }
     }
 
-    private void updateProgram(HttpServletRequest request, HttpServletResponse response) {
-
+    private void editProgram(HttpServletRequest request, HttpServletResponse response) {
+        int programId = Integer.parseInt(request.getParameter("id"));
+        String programName = request.getParameter("programName");
+        Program program = this.adminService.findProgramById(programId);
+        RequestDispatcher dispatcher;
+        if(program == null){
+            request.setAttribute("message","not found program to edit");
+            dispatcher = request.getRequestDispatcher("/error-404.jsp");
+        } else {
+            program.setProgramName(programName);
+            this.adminService.editProgram(program);
+            request.setAttribute("program", program);
+            request.setAttribute("message", "Program information was updated");
+            dispatcher = request.getRequestDispatcher("/admin/program_management/editProgram" +
+                    ".jsp");
+        }
+        try {
+            dispatcher.forward(request, response);
+        } catch (ServletException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void deleteProgram(HttpServletRequest request, HttpServletResponse response) {
@@ -52,12 +71,12 @@ public class ProgramManagementServlet extends HttpServlet {
        Program program = this.adminService.findProgramById(id);
        if (program == null) {
            try {
-               request.getRequestDispatcher("error-404.jsp").forward(request,response);
+               request.getRequestDispatcher("/error-404.jsp").forward(request,response);
            } catch (ServletException | IOException e) {
                e.printStackTrace();
            }
        } else {
-           this.adminService.remove(id);
+           this.adminService.removeProgram(id);
            try {
                response.sendRedirect("/admin/program");
            } catch (IOException exception) {
@@ -69,10 +88,10 @@ public class ProgramManagementServlet extends HttpServlet {
     private void addProgram(HttpServletRequest request, HttpServletResponse response) {
         String programName = request.getParameter("programName");
         Program newProgram = new Program(programName);
-        this.adminService.add(newProgram);
+        this.adminService.addProgram(newProgram);
         request.setAttribute("message","New program is added");
         try {
-            request.getRequestDispatcher("class_management/addProgram.jsp").forward(request,
+            request.getRequestDispatcher("/admin/program_management/addProgram.jsp").forward(request,
                     response);
         } catch (ServletException | IOException e) {
             e.printStackTrace();
@@ -96,7 +115,7 @@ public class ProgramManagementServlet extends HttpServlet {
                 case "deleteProgram":
                     showDeleteProgramForm(request,response);
                     break;
-                case "edit":
+                case "editProgram":
                     showEditProgramForm(request,response);
                 default:
                     listProgram(request,response);
@@ -106,7 +125,22 @@ public class ProgramManagementServlet extends HttpServlet {
     }
 
     private void showEditProgramForm(HttpServletRequest request, HttpServletResponse response) {
-
+        int id = Integer.parseInt(request.getParameter("id"));
+        Program program = this.adminService.findProgramById(id);
+        RequestDispatcher dispatcher;
+        if(program == null){
+            request.setAttribute("message", "Can't find the product to edit");
+            dispatcher = request.getRequestDispatcher("/error-404.jsp");
+        } else {
+            request.setAttribute("program", program);
+            dispatcher = request.getRequestDispatcher("/admin/program_management/editProgram" +
+                    ".jsp");
+        }
+        try {
+            dispatcher.forward(request, response);
+        } catch (ServletException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showDeleteProgramForm(HttpServletRequest request, HttpServletResponse response) {
@@ -115,11 +149,11 @@ public class ProgramManagementServlet extends HttpServlet {
         RequestDispatcher dispatcher;
         if (program == null) {
             request.setAttribute("message", "can't find the id to delete");
-            dispatcher = request.getRequestDispatcher("../../error-404.jsp");
+            dispatcher = request.getRequestDispatcher("/error-404.jsp");
         } else {
             request.setAttribute("program",program);
             dispatcher =
-                    request.getRequestDispatcher("class_management/deleteProgram.jsp");
+                    request.getRequestDispatcher("/admin/program_management/deleteProgram.jsp");
         }
         try {
             dispatcher.forward(request,response);
@@ -132,7 +166,7 @@ public class ProgramManagementServlet extends HttpServlet {
         List<Program> programList = this.adminService.findAllProgram();
         request.setAttribute("programs",programList);
         try {
-            request.getRequestDispatcher("class_management/listProgram.jsp").forward(request,
+            request.getRequestDispatcher("/admin/program_management/listProgram.jsp").forward(request,
                     response);
         } catch (ServletException | IOException e) {
             e.printStackTrace();
@@ -141,7 +175,7 @@ public class ProgramManagementServlet extends HttpServlet {
 
     private void showAddProgramForm(HttpServletRequest request, HttpServletResponse response) {
         try {
-            request.getRequestDispatcher("class_management/addProgram.jsp").forward(request,
+            request.getRequestDispatcher("/admin/program_management/addProgram.jsp").forward(request,
                     response);
         } catch (ServletException | IOException e) {
             e.printStackTrace();
