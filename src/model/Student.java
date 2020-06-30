@@ -7,27 +7,28 @@ public class Student {
     private String firstName;
     private String lastName;
     private String email;
-    private String className;
+    private int classId;
 
-    public Student(int studentId, String username, String password, String firstName, String lastName, String email, String className) {
+    public Student(int studentId, String username, String password, String firstName,
+                   String lastName, String email, int classId) {
         this.studentId = studentId;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.className = className;
+        this.classId = classId;
     }
 
     public Student(String username, String password, String firstName, String lastName,
-                   String email, String className) {
+                   String email, int classId) {
 
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.className = className;
+        this.classId = classId;
     }
 
     public int getStudentId() {
@@ -78,11 +79,12 @@ public class Student {
         this.email = email;
     }
 
-    public String getClassName() {
-        return className;
+
+    public int getClassId() {
+        return classId;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setClassId(int classId) {
+        this.classId = classId;
     }
 }
