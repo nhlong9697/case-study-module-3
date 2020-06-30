@@ -24,16 +24,12 @@
         <tr>
             <td>${classProgram.getClassId()}</td>
             <td><a
-                    href="/admin/program/${requestScope.programId}/class
-                    /${classProgram.getClassId()}
-">${classProgram.getClassName()}</a></td>
+                    href="/admin/program/${requestScope.programId}/class/${classProgram.getClassId()}">${classProgram.getClassName()}</a></td>
             <td><a
-                    href="/admin/program/${requestScope.programId}/class?action=editClass&id
-            =${classProgram.getClassId()}">Edit
+                    href="/admin/program/${requestScope.programId}/class?action=editClass&id=${classProgram.getClassId()}">Edit
             </a></td>
             <td><a
-                    href="/admin/program/${requestScope.programId}/class?action=deleteClass&id
-                    =${classProgram.getClassId()}">Delete
+                    href="/admin/program/${requestScope.programId}/class?action=deleteClass&id=${classProgram.getClassId()}">Delete
             </a></td>
         </tr>
     </c:forEach>

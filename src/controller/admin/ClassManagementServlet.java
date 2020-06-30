@@ -27,18 +27,22 @@ public class ClassManagementServlet extends HttpServlet {
             response.sendRedirect("/admin");
         } else {
             String action = request.getParameter("action");
+            String pathInfo[] = request.getPathInfo().split("/");
+            System.out.println(Arrays.toString(pathInfo));
+            String id = pathInfo[1];
+            int programId = Integer.parseInt(id);
             if (action == null) {
                 action = "";
             }
             switch (action) {
                 case "addClass":
-                    addClass(request,response);
+                    addClass(request,response,programId);
                     break;
                 case "deleteClass":
-                    deleteClass(request,response);
+                    deleteClass(request,response,programId);
                     break;
                 case "editClass":
-                    editClass(request,response);
+                    editClass(request,response,programId);
                     break;
                 default:
                     break;
@@ -46,18 +50,30 @@ public class ClassManagementServlet extends HttpServlet {
         }
     }
 
-    private void editClass(HttpServletRequest request, HttpServletResponse response) {
+    private void editClass(HttpServletRequest request, HttpServletResponse response, int programId) {
     }
 
-    private void deleteClass(HttpServletRequest request, HttpServletResponse response) {
-
+    private void deleteClass(HttpServletRequest request, HttpServletResponse response, int programId) {
+        int id = Integer.parseInt(request.getParameter("id"));
+        ProgramClass programClass = this.adminService.findClassById(id);
+        if (programClass == null) {
+            try {
+                request.getRequestDispatcher("/error-404.jsp").forward(request,response);
+            } catch (ServletException | IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            this.adminService.removeClass(id);
+            try {
+                response.sendRedirect("/admin/program/" + programId);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
     }
 
-    private void addClass(HttpServletRequest request, HttpServletResponse response) {
-        String pathInfo[] = request.getPathInfo().split("/");
-        System.out.println(Arrays.toString(pathInfo));
-        String id = pathInfo[1];
-        int programId = Integer.parseInt(id);
+    private void addClass(HttpServletRequest request, HttpServletResponse response, int programId) {
+
         String className = request.getParameter("className");
         ProgramClass newClass = new ProgramClass(className,programId);
         this.adminService.addClass(newClass);
@@ -77,34 +93,86 @@ public class ClassManagementServlet extends HttpServlet {
             request.setAttribute("not-login","Please login as admin");
             response.sendRedirect("/admin");
         } else {
-            String action = request.getParameter("action");
-            if (action == null) {
-                action = "";
+            String pathInfo[] = request.getPathInfo().split("/");
+            System.out.println(Arrays.toString(pathInfo));
+            int programId = Integer.parseInt(pathInfo[1]);
+            if (pathInfo[3] != null) {
+                String action = request.getParameter("action");
+                int classId = Integer.parseInt(pathInfo[3]);
+                if (action == null) {
+                    action = "";
+                }
+                switch (action) {
+                    case "addStudent":
+                        showAddStudentForm(request,response,programId,classId);
+                        break;
+                    case "deleteClass":
+                        showDeleteStudentForm(request,response,programId,classId);
+                        break;
+                    case "editClass":
+//                        showEditClassForm(request,response,programId);
+                        break;
+                    default:
+                        listStudent(request,response,programId,classId);
+                        break;
+                }
+            } else {
+                String action = request.getParameter("action");
+                if (action == null) {
+                    action = "";
+                }
+                switch (action) {
+                    case "addClass":
+                        showAddClassForm(request,response,programId);
+                        break;
+                    case "deleteClass":
+                        showDeleteClassForm(request,response,programId);
+                        break;
+                    case "editClass":
+                        showEditClassForm(request,response,programId);
+                        break;
+                    default:
+                        listClass(request,response,programId);
+                        break;
+                }
             }
-            switch (action) {
-                case "addClass":
-                    showAddClassForm(request,response);
-                    break;
-                case "deleteClass":
-                    showDeleteClassForm(request,response);
-                    break;
-                case "editClass":
-                    showEditClassForm(request,response);
-                    break;
-                default:
-                    listClass(request,response);
-                    break;
-            }
+
         }
     }
 
-    private void showDeleteClassForm(HttpServletRequest request, HttpServletResponse response
-                                     ) {
+    private void listStudent(HttpServletRequest request, HttpServletResponse response, int programId, int classId) {
 
     }
 
-    private void showAddClassForm(HttpServletRequest request, HttpServletResponse response
-                                  ) {
+    private void showDeleteStudentForm(HttpServletRequest request, HttpServletResponse response, int programId, int classId) {
+
+    }
+
+    private void showAddStudentForm(HttpServletRequest request, HttpServletResponse response, int programId, int classId) {
+
+    }
+
+    private void showDeleteClassForm(HttpServletRequest request, HttpServletResponse response, int programId) {
+        int id = Integer.parseInt(request.getParameter("id"));
+        ProgramClass programClass = this.adminService.findClassById(id);
+        RequestDispatcher dispatcher;
+        if (programClass == null) {
+            request.setAttribute("message", "can't find the class to delete");
+            dispatcher = request.getRequestDispatcher("/error-404.jsp");
+        } else {
+            request.setAttribute("programClass",programClass);
+            request.setAttribute("programId",programId);
+            dispatcher =
+                    request.getRequestDispatcher("/admin/class_management/deleteClass.jsp");
+        }
+        try {
+            dispatcher.forward(request,response);
+        } catch (ServletException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showAddClassForm(HttpServletRequest request, HttpServletResponse response, int programId) {
         try {
             request.getRequestDispatcher("/admin/class_management/addClass.jsp").forward(request,
                     response);
@@ -113,15 +181,10 @@ public class ClassManagementServlet extends HttpServlet {
         }
     }
 
-    private void listClass(HttpServletRequest request, HttpServletResponse response
-                           ) {
+    private void listClass(HttpServletRequest request, HttpServletResponse response, int programId) {
 
-        String pathInfo[] = request.getPathInfo().split("/");
-        System.out.println(Arrays.toString(pathInfo));
-        String id = pathInfo[1];
-        int programId = Integer.parseInt(id);
-        System.out.println(programId);
-        List<ProgramClass> classList = this.adminService.findAllClass(programId);
+
+        List<ProgramClass> classList = this.adminService.findAllClassOfAProgram(programId);
         request.setAttribute("programId",programId);
         request.setAttribute("classList",classList);
         try {
@@ -132,8 +195,7 @@ public class ClassManagementServlet extends HttpServlet {
         }
     }
 
-    private void showEditClassForm(HttpServletRequest request, HttpServletResponse response
-                                   ) {
+    private void showEditClassForm(HttpServletRequest request, HttpServletResponse response, int programId) {
     }
 
 

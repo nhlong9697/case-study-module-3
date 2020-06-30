@@ -18,5 +18,9 @@ public interface AdminService {
 
     void addClass(ProgramClass newClass);
 
-    List<ProgramClass> findAllClass(int programId);
+    List<ProgramClass> findAllClassOfAProgram(int programId);
+
+    ProgramClass findClassById(int id);
+
+    void removeClass(int id);
 }

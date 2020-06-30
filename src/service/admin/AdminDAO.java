@@ -18,12 +18,13 @@ public class AdminDAO implements AdminService{
             ".program WHERE program_id = ?";
     private final String DELETE_PROGRAM_BY_ID = "{CALL delete_program_by_id(?)}";
     private final String UPDATE_PROGRAM = "{CALL update_program(?,?)}";
-    private final String SELECT_ALL_CLASS = "SELECT class_id, class_name, program_id FROM " +
+    private final String SELECT_ALL_CLASS_FROM_A_PROGRAM = "SELECT class_id, class_name, " +
+            "program_id FROM " +
             "casestudy.class WHERE program_id = ?";
     private final String INSERT_CLASS = "{CALL insert_class(?,?)}";
     private final String SELECT_CLASS_BY_ID = "SELECT class_id, class_name, program_id FROM " +
             "casestudy.class WHERE class_id = ?";
-    private final String DELETE_CLASS_BY_ID = "{CALL delete_class_by_id}";
+    private final String DELETE_CLASS_BY_ID = "{CALL delete_class_by_id(?)}";
     private final String UPDATE_CLASS = "{CALL update_class(?,?,?)}";
     protected Connection getConnection() {
         Connection connection = null;
@@ -139,12 +140,13 @@ public class AdminDAO implements AdminService{
     }
 
     @Override
-    public List<ProgramClass> findAllClass(int programId) {
+    public List<ProgramClass> findAllClassOfAProgram(int programId) {
         List<ProgramClass> classList = new ArrayList<>();
-        System.out.println(SELECT_ALL_CLASS);
+        System.out.println(SELECT_ALL_CLASS_FROM_A_PROGRAM);
         try (
                 Connection connection = getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_CLASS);
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(SELECT_ALL_CLASS_FROM_A_PROGRAM);
         ) {
 
             System.out.println(preparedStatement);
@@ -164,5 +166,43 @@ public class AdminDAO implements AdminService{
             exception.printStackTrace();
         }
         return classList;
+    }
+
+    @Override
+    public ProgramClass findClassById(int id) {
+        ProgramClass programClass = null;
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SELECT_CLASS_BY_ID);
+        ) {
+
+            preparedStatement.setInt(1,id);
+            System.out.println(preparedStatement);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while(rs.next()) {
+                int classId = rs.getInt("class_id");
+                String className = rs.getString("class_name");
+                int programId = rs.getInt("program_id");
+                programClass = new ProgramClass(classId,className,programId);
+            }
+
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return programClass;
+    }
+
+    @Override
+    public void removeClass(int id) {
+        try (Connection connection = getConnection();
+             CallableStatement callableStatement =
+                     connection.prepareCall(DELETE_CLASS_BY_ID);
+        ) {
+            callableStatement.setInt(1, id);
+            callableStatement.executeUpdate();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 }
