@@ -36,7 +36,7 @@ public class StudentDAO implements StudentService{
             callableStatement.setString(3,student.getFirstName());
             callableStatement.setString(4,student.getLastName());
             callableStatement.setString(5,student.getEmail());
-            callableStatement.setString(6,student.getClassName());
+            callableStatement.setString(6,student.getLastName());
             isAdded = callableStatement.executeUpdate() == 1;
         } catch (SQLException exception) {
             exception.printStackTrace();

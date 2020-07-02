@@ -2,8 +2,11 @@ package controller.admin;
 
 import model.Program;
 import model.ProgramClass;
+import model.Student;
 import service.admin.AdminDAO;
 import service.admin.AdminService;
+import service.admin.AdminStudentDAO;
+import service.admin.AdminStudentService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,12 +23,15 @@ import java.util.List;
         "/*/class"})
 public class ClassManagementServlet extends HttpServlet {
     private final AdminService adminService = new AdminDAO();
+    private final AdminStudentService adminStudentService = new AdminStudentDAO();
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session.getAttribute("admin") == null) {
-            request.setAttribute("not-login","Please login as admin");
+            request.setAttribute("not-login", "Please login as admin");
             response.sendRedirect("/admin");
         } else {
+
             String action = request.getParameter("action");
             String pathInfo[] = request.getPathInfo().split("/");
             System.out.println(Arrays.toString(pathInfo));
@@ -36,19 +42,22 @@ public class ClassManagementServlet extends HttpServlet {
             }
             switch (action) {
                 case "addClass":
-                    addClass(request,response,programId);
+                    addClass(request, response, programId);
                     break;
                 case "deleteClass":
-                    deleteClass(request,response,programId);
+                    deleteClass(request, response, programId);
                     break;
                 case "editClass":
-                    editClass(request,response,programId);
+                    editClass(request, response, programId);
                     break;
                 default:
                     break;
             }
         }
+
     }
+
+
 
     private void editClass(HttpServletRequest request, HttpServletResponse response, int programId) {
     }
@@ -96,27 +105,6 @@ public class ClassManagementServlet extends HttpServlet {
             String pathInfo[] = request.getPathInfo().split("/");
             System.out.println(Arrays.toString(pathInfo));
             int programId = Integer.parseInt(pathInfo[1]);
-            if (pathInfo[3] != null) {
-                String action = request.getParameter("action");
-                int classId = Integer.parseInt(pathInfo[3]);
-                if (action == null) {
-                    action = "";
-                }
-                switch (action) {
-                    case "addStudent":
-                        showAddStudentForm(request,response,programId,classId);
-                        break;
-                    case "deleteClass":
-                        showDeleteStudentForm(request,response,programId,classId);
-                        break;
-                    case "editClass":
-//                        showEditClassForm(request,response,programId);
-                        break;
-                    default:
-                        listStudent(request,response,programId,classId);
-                        break;
-                }
-            } else {
                 String action = request.getParameter("action");
                 if (action == null) {
                     action = "";
@@ -135,13 +123,20 @@ public class ClassManagementServlet extends HttpServlet {
                         listClass(request,response,programId);
                         break;
                 }
-            }
-
         }
     }
 
     private void listStudent(HttpServletRequest request, HttpServletResponse response, int programId, int classId) {
-
+        List<Student> classList = this.adminStudentService.findAllStudentOfAClass(classId);
+        request.setAttribute("programId",programId);
+        request.setAttribute("classId", classId);
+        request.setAttribute("classList",classList);
+        try {
+            request.getRequestDispatcher("/admin/class_management/listClass.jsp").forward(request,
+                    response);
+        } catch (ServletException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showDeleteStudentForm(HttpServletRequest request, HttpServletResponse response, int programId, int classId) {
@@ -149,7 +144,14 @@ public class ClassManagementServlet extends HttpServlet {
     }
 
     private void showAddStudentForm(HttpServletRequest request, HttpServletResponse response, int programId, int classId) {
-
+        request.setAttribute("programId", programId);
+        request.setAttribute("classId",classId);
+        try {
+            request.getRequestDispatcher("/admin/student_management/addStudent.jsp").forward(request,
+                    response);
+        } catch (ServletException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showDeleteClassForm(HttpServletRequest request, HttpServletResponse response, int programId) {
@@ -197,6 +199,5 @@ public class ClassManagementServlet extends HttpServlet {
 
     private void showEditClassForm(HttpServletRequest request, HttpServletResponse response, int programId) {
     }
-
 
 }
